@@ -35,7 +35,7 @@ bot.on("message", (message) => {
     });
 });
 
-cron.schedule("*/10 9-16 * * 1-5", () => {
+cron.schedule("*/2 * * * *", () => {
   console.log("Cron Executed!");
   fetchData(scanners);
 });
