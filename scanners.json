@@ -1,0 +1,42 @@
+[
+  {
+    "id": 0,
+    "name": "POSITIONAL_MONTHLY",
+    "url": "https://chartink.com/screener/copy-monthly-positional-strategy-streak-backtested-7-months-jan-july-2018-3-40-13",
+    "latest_response": [
+      "SIEMENS",
+      "HDFCAMC",
+      "RIIL",
+      "UTIAMC",
+      "SANGHVIMOV",
+      "LICI",
+      "ASTRAMICRO",
+      "NAM-INDIA",
+      "QUICKHEAL",
+      "PURVA",
+      "ALEMBICLTD",
+      "VAKRANGEE"
+    ],
+    "old_response": [
+      "SIEMENS",
+      "HDFCAMC",
+      "RIIL",
+      "UTIAMC",
+      "SANGHVIMOV",
+      "LICI",
+      "ASTRAMICRO",
+      "NAM-INDIA",
+      "QUICKHEAL",
+      "PURVA",
+      "ALEMBICLTD",
+      "VAKRANGEE"
+    ]
+  },
+  {
+    "id": 1,
+    "name": "BACKTESTED_MULTIBAGGER",
+    "url": "https://chartink.com/screener/copy-best-backtested-by-neeraj-new-multibagger-stocks-screener-8",
+    "latest_response": [],
+    "old_response": []
+  }
+]
