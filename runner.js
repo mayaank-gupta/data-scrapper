@@ -13,7 +13,8 @@ async function fetchData(scanners) {
     if (Array.isArray(scanners) && scanners.length) {
       for (let scanner of scanners) {
         const browser = await puppeteer.launch({
-          headless: "new", // Set to true for headless mode, false for non-headless
+          headless: "new",
+          timeout: 0,
         });
         const page = await browser.newPage();
 

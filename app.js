@@ -2,14 +2,10 @@ require("dotenv").config();
 var createError = require("http-errors");
 var cron = require("node-cron");
 var express = require("express");
-const TelegramBot = require("node-telegram-bot-api");
-var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const scanners = require("./scanners.json");
 const fetchData = require("./runner");
-const token = process.env.TELEGRAM_TOKEN;
-const bot = new TelegramBot(token, { polling: false });
 
 var indexRouter = require("./routes/index");
 
@@ -22,20 +18,7 @@ app.use(cookieParser());
 
 app.use("/", indexRouter);
 
-bot.on("message", (message) => {
-  // Send the message to the bot itself
-  console.log(message);
-  bot
-    .sendMessage(botId, messageText)
-    .then(() => {
-      console.log("Message sent to the bot itself successfully");
-    })
-    .catch((error) => {
-      console.error("Error sending message to the bot itself:", error);
-    });
-});
-
-cron.schedule("*/2 * * * *", () => {
+cron.schedule("*/1 * * * *", () => {
   console.log("Cron Executed!");
   fetchData(scanners);
 });
