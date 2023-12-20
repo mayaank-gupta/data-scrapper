@@ -18,7 +18,7 @@ app.use(cookieParser());
 
 app.use("/", indexRouter);
 
-cron.schedule("*/1 * * * *", () => {
+cron.schedule("*/10 9-16 * * 1-5", () => {
   console.log("Cron Executed!");
   fetchData(scanners);
 });
