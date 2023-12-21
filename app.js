@@ -19,7 +19,7 @@ app.use(cookieParser());
 app.use("/", indexRouter);
 
 const job = CronJob.from({
-  cronTime: "*/25 9-16 * * 1-5",
+  cronTime: "*/20 9-16 * * 1-5",
   onTick: function () {
     fetchData(scanners);
   },
