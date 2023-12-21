@@ -18,10 +18,12 @@ app.use(cookieParser());
 
 app.use("/", indexRouter);
 
-cron.schedule("*/10 9-16 * * 1-5", () => {
-  console.log("Cron Executed!");
-  fetchData(scanners);
-});
+(async () => {
+  cron.schedule("*/10 9-16 * * 1-5", () => {
+    console.log("Cron Executed!");
+    fetchData(scanners);
+  });
+})();
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
