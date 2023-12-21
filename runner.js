@@ -10,6 +10,7 @@ function arraysEqual(arr1, arr2) {
 
 async function fetchData(scanners) {
   try {
+    console.log("fetchData Executed!");
     if (Array.isArray(scanners) && scanners.length) {
       for (let scanner of scanners) {
         const browser = await puppeteer.launch({

@@ -1,7 +1,7 @@
 require("dotenv").config();
 var createError = require("http-errors");
-var cron = require("node-cron");
 var express = require("express");
+const { CronJob } = require("cron");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const scanners = require("./scanners.json");
@@ -18,12 +18,16 @@ app.use(cookieParser());
 
 app.use("/", indexRouter);
 
-(async () => {
-  cron.schedule("*/10 9-16 * * 1-5", () => {
-    console.log("Cron Executed!");
+const job = CronJob.from({
+  cronTime: "*/10 9-16 * * 1-5",
+  onTick: function () {
     fetchData(scanners);
-  });
-})();
+  },
+  start: false,
+  timeZone: "Asia/Kolkata",
+});
+
+job.start();
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
