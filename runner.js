@@ -26,11 +26,10 @@ async function fetchData(scanners) {
               const parsedJson = JSON.parse(body);
               if (Array.isArray(parsedJson.data) && parsedJson.data.length) {
                 const extractedData = parsedJson.data.map((el) => el.nsecode);
+                const modifiedArray = parsedJson.data.map((el) => [el.nsecode, el.close]);
                 if (!scanners[scanner.id].old_response.length) {
                   scanners[scanner.id].old_response = extractedData;
-                  const message = `<b>${scanners[scanner.id].name}</b>\n<b>Stocks:</b> ${extractedData.join(", ")}\n<b>Time:</b> ${moment()
-                    .utcOffset("+05:30")
-                    .format("YYYY-MM-DD HH:mm A")}\n`;
+                  const message = `<b>${scanners[scanner.id].name}</b>\n\n<b>Stocks:</b> ${modifiedArray.map(item => `\n- ${item[0]} --> ${item[1]}`).join('')}\n\n<b>Time:</b> ${moment().utcOffset("+05:30").format("YYYY-MM-DD HH:mm A")}\n`;
                   await sendMessage(message);
                 } else if (arraysEqual(scanners[scanner.id].old_response, extractedData)) {
                 } else {
@@ -42,11 +41,11 @@ async function fetchData(scanners) {
                     (item) => !scanners[scanner.id].latest_response.includes(item)
                   );
                   scanner.old_response = extractedData;
-                  const message = `<b>${scanners[scanner.id].name}</b>\n<b>New Added:</b> ${addedElements.join(
+                  const message = `<b>${scanners[scanner.id].name}</b>\n\n<b>New Added:</b> <i>${addedElements.join(
                     ", "
-                  )}\n<b>Removed:</b> ${removedElements.join(", ")}\n<b>Stocks:</b> ${extractedData.join(", ")}\n<b>Time:</b> ${moment()
+                  )}</i>\n\n<b>Removed:</b> <i>${removedElements.join(", ")}</i>\n\n<b>Stocks:</b> ${modifiedArray.map(item => `\n- ${item[0]} --> ${item[1]}`).join('')}\n\n<b>Time:</b> <i>${moment()
                     .utcOffset("+05:30")
-                    .format("YYYY-MM-DD HH:mm A")}\n`;
+                    .format("YYYY-MM-DD HH:mm A")}</i>\n`;
                   await sendMessage(message);
                 }
                 fs.writeFile(filePath, JSON.stringify(scanners), "utf8", (writeErr) => {
