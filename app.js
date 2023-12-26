@@ -5,7 +5,9 @@ const { CronJob } = require("cron");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const scanners = require("./scanners.json");
+const fetchHistoryScanners = require("./fetch-history.json");
 const fetchData = require("./runner");
+const fetchHistory = require("./fetch-history");
 
 var indexRouter = require("./routes/index");
 
@@ -26,6 +28,17 @@ const job = CronJob.from({
   start: false,
   timeZone: "Asia/Kolkata",
 });
+
+const fetchHistoricalData = CronJob.from({
+  cronTime: "*/15 9-16 * * 1-5",
+  onTick: function () {
+    fetchHistory(fetchHistoryScanners);
+  },
+  start: false,
+  timeZone: "Asia/Kolkata",
+});
+
+fetchHistoricalData.start();
 
 job.start();
 
