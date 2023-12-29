@@ -8,6 +8,13 @@ const filePath = "fetch-history.json";
 function epochToIST(epochTime) {
   return moment.utc(epochTime).tz("Asia/Kolkata").format("YYYY-MM-DD");
 }
+let browser;
+(async () => {
+  browser = await puppeteer.launch({
+    headless: "new",
+    timeout: 0,
+  });
+})();
 
 const stockUrl = `https://stock-daily-price.vercel.app/get_stock_data`;
 
@@ -15,11 +22,6 @@ async function fetchData(scanners) {
   try {
     console.log("fetchHistory Executed!");
     if (Array.isArray(scanners) && scanners.length) {
-      const browser = await puppeteer.launch({
-        headless: "new",
-        timeout: 0,
-      });
-
       for (let scanner of scanners) {
         const page = await browser.newPage();
         let finalObject = [];

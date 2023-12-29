@@ -7,15 +7,18 @@ const filePath = "scanners.json";
 function arraysEqual(arr1, arr2) {
   return arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index]);
 }
+let browser;
+(async () => {
+  browser = await puppeteer.launch({
+    headless: "new",
+    timeout: 0,
+  });
+})();
 
 async function fetchData(scanners) {
   try {
     console.log("fetchData Executed!");
     if (Array.isArray(scanners) && scanners.length) {
-      const browser = await puppeteer.launch({
-        headless: "new",
-        timeout: 0,
-      });
       for (let scanner of scanners) {
         const page = await browser.newPage();
 
