@@ -8,5 +8,10 @@
     "id": 1,
     "name": "RSI_MACD_StochRSI_MONTHLY",
     "url": "https://chartink.com/screener/copy-monthly-rsi-macd-stochrsi-ema-14"
+  },
+  {
+    "id": 3,
+    "name": "MONTHLY_POSITIONAL",
+    "url": "https://chartink.com/screener/copy-monthly-positional-strategy-streak-backtested-7-months-jan-july-2018-3-40-13"
   }
 ]

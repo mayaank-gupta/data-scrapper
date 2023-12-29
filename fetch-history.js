@@ -15,11 +15,12 @@ async function fetchData(scanners) {
   try {
     console.log("fetchHistory Executed!");
     if (Array.isArray(scanners) && scanners.length) {
+      const browser = await puppeteer.launch({
+        headless: "new",
+        timeout: 0,
+      });
+
       for (let scanner of scanners) {
-        const browser = await puppeteer.launch({
-          headless: "new",
-          timeout: 0,
-        });
         const page = await browser.newPage();
         let finalObject = [];
         let addedElements = [];
