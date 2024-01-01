@@ -7,12 +7,15 @@ const bot = new TelegramBot(token, { polling: false });
 
 async function sendMessage(message) {
   const messageText = message;
-  bot
-    .sendMessage(chatId, messageText, { parse_mode: "HTML" })
-    .then(() => {})
-    .catch((error) => {
-      console.error("Error sending message to the bot itself:", error);
-    });
+  const chatIdsArray = chatId.split(",");
+  for (let userId of chatIdsArray) {
+    bot
+      .sendMessage(userId, messageText, { parse_mode: "HTML" })
+      .then(() => {})
+      .catch((error) => {
+        console.error("Error sending message to the bot itself:", error);
+      });
+  }
 }
 
 module.exports = sendMessage;

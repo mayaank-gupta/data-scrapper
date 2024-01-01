@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use("/", indexRouter);
 
 const job = CronJob.from({
-  cronTime: "*/20 9-16 * * 1-5",
+  cronTime: "*/1 9-16 * * 1-6",
   onTick: function () {
     fetchData(scanners);
   },
@@ -30,7 +30,7 @@ const job = CronJob.from({
 });
 
 const fetchHistoricalData = CronJob.from({
-  cronTime: "*/15 9-16 * * 1-5",
+  cronTime: "*/30 * * * *",
   onTick: function () {
     fetchHistory(fetchHistoryScanners);
   },
@@ -40,7 +40,7 @@ const fetchHistoricalData = CronJob.from({
 
 fetchHistoricalData.start();
 
-job.start();
+// job.start();
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
