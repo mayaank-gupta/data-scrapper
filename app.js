@@ -30,7 +30,7 @@ const job = CronJob.from({
 });
 
 const fetchHistoricalData = CronJob.from({
-  cronTime: "*/1 * * * *",
+  cronTime: "*/5 * * * *",
   onTick: function () {
     fetchHistory(fetchHistoryScanners);
   },

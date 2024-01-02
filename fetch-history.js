@@ -37,7 +37,7 @@ async function fetchData(scanners) {
                   const lastResponseElement = parsedJson.aggregatedStockList[parsedJson.aggregatedStockList.length - 1].filter(
                     (el, j) => j % 3 === 0
                   );
-                  let last20Responses = parsedJson.aggregatedStockList.slice(-21, -1);
+                  let last20Responses = parsedJson.aggregatedStockList.slice(-11, -1);
                   finalObject = last20Responses.flatMap((element, i) => last20Responses[i].filter((el, j) => j % 3 === 0));
                   finalObject = [...new Set(finalObject)];
                   addedElements = lastResponseElement.filter((item) => !finalObject.includes(item));
