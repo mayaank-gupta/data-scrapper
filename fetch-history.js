@@ -24,6 +24,7 @@ async function fetchData(scanners) {
     if (Array.isArray(scanners) && scanners.length) {
       for (let scanner of scanners) {
         const page = await browser.newPage();
+        await page.goto(scanner.url);
         let finalObject = [];
         let addedElements = [];
         // Intercept and log responses
@@ -68,9 +69,6 @@ async function fetchData(scanners) {
             });
           }
         });
-
-        // Navigate to the webpage
-        await page.goto(scanner.url);
 
         // Close the browser
         await browser.close();
