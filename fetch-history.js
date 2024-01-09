@@ -8,9 +8,9 @@ const filePath = 'fetch-history.json';
 let browser;
 async function launchBrowser() {
   browser = await puppeteer.launch({
-    headless: "new",
+    headless: 'new',
     timeout: 0,
-    executablePath: '/usr/bin/chromium-browser',
+    // executablePath: '/usr/bin/chromium-browser',
   });
 }
 
@@ -92,9 +92,10 @@ async function fetchData(scanners) {
           console.error('Page error:', error);
         });
 
-        console.log("page.goto", scanner.url);
+        console.log('page.goto', scanner.url);
         await page.goto(scanner.url, {
           waitUntil: 'load',
+          timeout: 60000,
         });
         await new Promise((r) => setTimeout(r, 10000));
         await page.close();
