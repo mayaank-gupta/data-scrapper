@@ -97,6 +97,8 @@ async function fetchData(scanners) {
         console.log('page.goto', scanner.url);
         await page.goto(scanner.url, {
           waitUntil: 'networkidle2', 
+        }).catch((error) => {
+          page.reload();
         });
         await new Promise((r) => setTimeout(r, 10000));
         await page.close();
