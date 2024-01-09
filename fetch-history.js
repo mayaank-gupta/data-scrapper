@@ -2,15 +2,12 @@ const puppeteer = require('puppeteer');
 const moment = require('moment-timezone');
 const axios = require('axios');
 const sendMessage = require('./send_message');
-const fs = require('fs');
-const filePath = 'fetch-history.json';
 
 let browser;
 async function launchBrowser() {
   browser = await puppeteer.launch({
     headless: 'new',
     timeout: 0,
-    // executablePath: '/usr/bin/chromium-browser',
   });
 }
 
@@ -25,6 +22,11 @@ async function fetchData(scanners) {
         .catch((err) => console.error('Error launching browser:', err));
       for (let scanner of scanners) {
         const page = await browser.newPage();
+
+        page.setUserAgent(
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        );
+        
         let finalObject = [];
         let addedElements = [];
         // Intercept and log responses
@@ -94,8 +96,7 @@ async function fetchData(scanners) {
 
         console.log('page.goto', scanner.url);
         await page.goto(scanner.url, {
-          waitUntil: 'load',
-          timeout: 60000,
+          waitUntil: 'load', 
         });
         await new Promise((r) => setTimeout(r, 10000));
         await page.close();
