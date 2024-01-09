@@ -10,6 +10,7 @@ async function launchBrowser() {
   browser = await puppeteer.launch({
     headless: "new",
     timeout: 0,
+    executablePath: '/usr/bin/chromium-browser',
   });
 }
 
@@ -90,6 +91,8 @@ async function fetchData(scanners) {
         page.on('error', (error) => {
           console.error('Page error:', error);
         });
+
+        console.log("page.goto", scanner.url);
         await page.goto(scanner.url, {
           waitUntil: 'load',
         });
