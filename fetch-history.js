@@ -8,6 +8,8 @@ async function launchBrowser() {
   browser = await puppeteer.launch({
     headless: 'new',
     timeout: 0,
+    executablePath: '/usr/bin/chromium-browser', // Replace with your Chromium path
+
   });
 }
 
