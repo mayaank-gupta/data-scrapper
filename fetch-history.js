@@ -8,8 +8,6 @@ async function launchBrowser() {
   browser = await puppeteer.launch({
     headless: 'new',
     timeout: 0,
-    executablePath: '/usr/bin/chromium-browser', // Replace with your Chromium path
-
   });
 }
 
@@ -97,13 +95,9 @@ async function fetchData(scanners) {
         });
 
         console.log('page.goto', scanner.url);
-        await page.reload();
         await page
           .goto(scanner.url, {
-            waitUntil: 'networkidle2',
-          })
-          .catch(async (error) => {
-            await page.reload();
+            waitUntil: 'load',
           });
         await new Promise((r) => setTimeout(r, 10000));
         await page.close();
