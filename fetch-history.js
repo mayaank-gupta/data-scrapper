@@ -24,9 +24,9 @@ async function fetchData(scanners) {
         const page = await browser.newPage();
 
         page.setUserAgent(
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         );
-        
+
         let finalObject = [];
         let addedElements = [];
         // Intercept and log responses
@@ -95,11 +95,14 @@ async function fetchData(scanners) {
         });
 
         console.log('page.goto', scanner.url);
-        await page.goto(scanner.url, {
-          waitUntil: 'networkidle2', 
-        }).catch((error) => {
-          page.reload();
-        });
+        await page.reload();
+        await page
+          .goto(scanner.url, {
+            waitUntil: 'networkidle2',
+          })
+          .catch(async (error) => {
+            await page.reload();
+          });
         await new Promise((r) => setTimeout(r, 10000));
         await page.close();
       }
