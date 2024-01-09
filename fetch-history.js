@@ -19,7 +19,9 @@ async function fetchData(scanners) {
   try {
     console.log('fetchHistory Executed!');
     if (Array.isArray(scanners) && scanners.length) {
-      await launchBrowser();
+      await launchBrowser()
+        .then(() => console.log('Browser launched successfully'))
+        .catch((err) => console.error('Error launching browser:', err));
       for (let scanner of scanners) {
         const page = await browser.newPage();
         let finalObject = [];
