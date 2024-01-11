@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+const chromium = require("chrome-aws-lambda");
 const moment = require("moment");
 const sendMessage = require("./send_message");
 const fs = require("fs");
@@ -7,22 +7,20 @@ const filePath = "scanners.json";
 function arraysEqual(arr1, arr2) {
   return arr1.length === arr2.length && arr1.every((value, index) => value === arr2[index]);
 }
-let browser;
-async function launchBrowser() {
-  browser = await puppeteer.launch({
-    headless: "new",
-    timeout: 10000,
-  });
-}
-
+let browser = null;
 async function fetchData(scanners) {
   try {
     console.log("fetchData Executed!");
     if (Array.isArray(scanners) && scanners.length) {
-      await launchBrowser();
+      browser = await chromium.puppeteer.launch({
+        args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath,
+        headless: false,
+        ignoreHTTPSErrors: true,
+      });
       for (let scanner of scanners) {
         const page = await browser.newPage();
-
         // Intercept and log responses
         page.on("response", (response) => {
           if (response.url().includes("screener/process")) {
@@ -70,13 +68,16 @@ async function fetchData(scanners) {
 
         // Navigate to the webpage
         await page.goto(scanner.url);
-
-        // Close the browser
-        await browser.close();
+        await page.waitForNetworkIdle();
       }
+      await browser.close();
     }
   } catch (err) {
     console.log(err);
+  } finally {
+    if (browser !== null) {
+      await browser.close();
+    }
   }
 }
 module.exports = fetchData;

@@ -8,6 +8,7 @@ const scanners = require("./scanners.json");
 const fetchHistoryScanners = require("./fetch-history.json");
 const fetchData = require("./runner");
 const fetchHistory = require("./fetch-history");
+const fetchCsrfToken = require("./fetch-csrf");
 
 var indexRouter = require("./routes/index");
 
@@ -21,9 +22,18 @@ app.use(cookieParser());
 app.use("/", indexRouter);
 
 const job = CronJob.from({
-  cronTime: "*/1 9-16 * * 1-6",
+  cronTime: "*/5 9-16 * * *",
   onTick: function () {
     fetchData(scanners);
+  },
+  start: false,
+  timeZone: "Asia/Kolkata",
+});
+
+const fetchCsrf = CronJob.from({
+  cronTime: "*/1 9-16 * * *",
+  onTick: function () {
+    fetchCsrfToken(fetchHistoryScanners);
   },
   start: false,
   timeZone: "Asia/Kolkata",
@@ -38,9 +48,10 @@ const fetchHistoricalData = CronJob.from({
   timeZone: "Asia/Kolkata",
 });
 
-fetchHistoricalData.start();
+// fetchCsrf.start();
 
-// job.start();
+// fetchHistoricalData.start();
+job.start();
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

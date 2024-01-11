@@ -8,8 +8,7 @@ const filePath = "fetch-history.json";
 let browser;
 async function launchBrowser() {
   browser = await puppeteer.launch({
-    headless: "new",
-    timeout: 0,
+    headless: false,
   });
 }
 
@@ -69,13 +68,8 @@ async function fetchData(scanners) {
               .catch((err) => console.error(err));
           }
         });
-        page.on("error", (error) => {
-          console.error("Page error:", error);
-        });
-        await page.goto(scanner.url, {
-          waitUntil: "load",
-        });
-        await new Promise((r) => setTimeout(r, 10000));
+        await page.goto(scanner.url);
+        await page.waitForResponse(response => response.url().includes('backtest/process'));
         await page.close();
       }
       await browser.close();

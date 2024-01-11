@@ -1,31 +1,34 @@
-const puppeteer = require("puppeteer");
+const chromium = require("chrome-aws-lambda");
 
-async function run() {
-  // Launch browser
-  const browser = await puppeteer.launch({
-    headless: false,
-  });
+async function test() {
+  let result = null;
+  let browser = null;
 
   try {
-    // Open a new page
-    const page = await browser.newPage();
-
-    // Navigate to a URL
-    const url = "https://google.com";
-    await page.goto(url, {
-      waitUntil: "domcontentloaded",
+    browser = await chromium.puppeteer.launch({
+      args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath,
+      headless: false,
+      ignoreHTTPSErrors: true,
     });
 
-    await page.waitForTimeout(5000);
+    let page = await browser.newPage();
 
-    // Perform other actions on the page if needed
+    await page.goto("https://google.com");
+
+    result = await page.waitForNetworkIdle();
+    console.log(result)
   } catch (error) {
-    console.error("Error:", error);
+    console.log(error)
+    return error;
   } finally {
-    // Close the browser
-    await browser.close();
+    if (browser !== null) {
+      await browser.close();
+    }
   }
+
+  return result;
 }
 
-// Run the script
-run();
+test();
