@@ -90,21 +90,8 @@ async function fetchData(scanners) {
               .catch((err) => console.error(err));
           }
         });
-<<<<<<< HEAD
         await page.goto(scanner.url);
         await page.waitForResponse(response => response.url().includes('backtest/process'));
-=======
-        page.on('error', (error) => {
-          console.error('Page error:', error);
-        });
-
-        console.log('page.goto', scanner.url);
-        await page
-          .goto(scanner.url, {
-            waitUntil: 'load',
-          });
-        await new Promise((r) => setTimeout(r, 10000));
->>>>>>> 66bb215f23cc6515fd4a694fc9a644fdb7f03ae5
         await page.close();
       }
     }
