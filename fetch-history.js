@@ -14,7 +14,7 @@ async function fetchData(scanners) {
         args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
         defaultViewport: chromium.defaultViewport,
         executablePath: await chromium.executablePath,
-        headless: false,
+        headless: true,
         ignoreHTTPSErrors: true,
       });
       for (let scanner of scanners) {
@@ -37,6 +37,7 @@ async function fetchData(scanners) {
                     finalObject = last20Responses.flatMap((element, i) => last20Responses[i].filter((el, j) => j % 3 === 0));
                     finalObject = [...new Set(finalObject)];
                     addedElements = lastResponseElement.filter((item) => !finalObject.includes(item));
+                    console.log("Added Elements", addedElements.length);
                     if (addedElements.length) {
                       axios({
                         method: "post",
