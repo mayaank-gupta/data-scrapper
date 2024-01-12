@@ -36,10 +36,7 @@ async function fetchData(scanners) {
                     let last20Responses = parsedJson.aggregatedStockList.slice(-21, -1);
                     finalObject = last20Responses.flatMap((element, i) => last20Responses[i].filter((el, j) => j % 3 === 0));
                     finalObject = [...new Set(finalObject)];
-                    console.log("aaaad", finalObject);
                     addedElements = lastResponseElement.filter((item) => !finalObject.includes(item));
-                    console.log("aaaadad", addedElements);
-                    console.log("latest", lastResponseElement);
                     if (addedElements.length) {
                       axios({
                         method: "post",
