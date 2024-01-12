@@ -1,23 +1,8 @@
 [
   {
     "id": 0,
-    "name": "MONTHLY_MULTIBAGGER",
-    "url": "https://chartink.com/screener/copy-best-backtested-by-neeraj-new-multibagger-stocks-screener-8",
-    "old_response": [],
-    "latest_response": []
-  },
-  {
-    "id": 1,
-    "name": "MONTHLY_POSITIONAL",
-    "url": "https://chartink.com/screener/copy-monthly-positional-strategy-streak-backtested-7-months-jan-july-2018-3-40-13",
-    "old_response": [],
-    "latest_response": []
-  },
-  {
-    "id": 1,
-    "name": "ABHI_SUCCESS_7",
-    "url": "https://chartink.com/screener/copy-abhi-success-7-backtested-3",
-    "old_response": [],
-    "latest_response": []
+    "name": "MONTHLY_MULTIBAGGER_ORIGINAL",
+    "url": "https://chartink.com/screener/new-multibagger-stocks-screener-no-ema",
+    "old_response": []
   }
 ]
