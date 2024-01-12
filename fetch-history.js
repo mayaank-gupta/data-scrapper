@@ -74,7 +74,9 @@ async function fetchData(scanners) {
   } catch (err) {
     console.log(err);
   } finally {
-    await browser.close();
+    if (browser !== null) {
+      await browser.close();
+    }
   }
 }
 module.exports = fetchData;
