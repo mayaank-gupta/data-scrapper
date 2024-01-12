@@ -40,7 +40,7 @@ const fetchCsrf = CronJob.from({
 });
 
 const fetchHistoricalData = CronJob.from({
-  cronTime: "*/5 * * * *",
+  cronTime: "*/5 9-16 * * 1-5",
   onTick: function () {
     fetchHistory(fetchHistoryScanners);
   },
@@ -50,8 +50,8 @@ const fetchHistoricalData = CronJob.from({
 
 // fetchCsrf.start();
 
-// fetchHistoricalData.start();
-job.start();
+fetchHistoricalData.start();
+// job.start();
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
