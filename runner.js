@@ -19,7 +19,7 @@ async function fetchData(scanners) {
         args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
         defaultViewport: chromium.defaultViewport,
         executablePath: await chromium.executablePath,
-        headless: "new",
+        headless: true,
         ignoreHTTPSErrors: true,
       });
       for (let scanner of scanners) {
