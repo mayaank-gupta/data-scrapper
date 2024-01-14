@@ -1,13 +1,28 @@
 const chromium = require("chrome-aws-lambda");
 const moment = require("moment-timezone");
 const fetchHistoryScanners = require("./fetch-history.json");
+const fetchFinCode = require("./utils/fetch-fincode");
+const sendMessage = require("./send_message");
 const safePromise = (promise) => promise.then((data) => [null, data]).catch((err) => [err]);
 const models = require("./models");
 const ScannersModel = models.scanners;
+const SymbolModel = models.symbol;
+const DailyScanDataModel = models.daily_scan_data;
 
-async function scrapStockslist(url, page) {
+function arraysHaveSameElements(arr1, arr2) {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+
+  const sortedArr1 = arr1.slice().sort();
+  const sortedArr2 = arr2.slice().sort();
+
+  return sortedArr1.every((element, index) => element === sortedArr2[index]);
+}
+
+async function scrapStockslist(scannerInput, page) {
   const [visitError] = await safePromise(
-    page.goto(url, {
+    page.goto(scannerInput.link, {
       waitUntil: "networkidle2",
     })
   );
@@ -56,23 +71,81 @@ async function scrapStockslist(url, page) {
 
   if (typeof scrapedArr == "undefined") return;
   if (!Array.isArray(scrapedArr) && !scrapedArr.length) return;
-
   const dateNow = moment().tz("Asia/Kolkata").format();
 
   const normalizedArr = [];
+  const ticketList = [];
+  let symbolCreate;
 
   for (const stock of scrapedArr) {
     normalizedArr.push({
       name: stock["Stock Name"],
       symbol: stock["Symbol"],
-      [dateNow]: {
-        price: stock["Price"],
-        change: stock["% Chg"],
-      },
+      price: stock["Price"],
+      change: stock["% Chg"],
     });
   }
 
-  return normalizedArr;
+  for (let symbolData of normalizedArr) {
+    const singleSymbolData = await SymbolModel.findOne({
+      raw: true,
+      where: {
+        symbol: symbolData.symbol,
+      },
+    });
+
+    if (!singleSymbolData) {
+      const finCode = await fetchFinCode(symbolData.symbol);
+
+      const payload = {
+        symbol: symbolData.symbol,
+        stock_name: symbolData.name,
+        fin_code: finCode || null,
+      };
+
+      symbolCreate = SymbolModel.create(payload);
+      ticketList.push(+symbolCreate.id);
+    } else {
+      ticketList.push(+singleSymbolData.id);
+    }
+  }
+  const dailyScanPayload = {
+    scannerId: scannerInput.id,
+    tickerList: ticketList,
+  };
+
+  if (ticketList.length) {
+    const scannerLatestData = await DailyScanDataModel.findOne({
+      raw: true,
+      where: {
+        scannerId: scannerInput.id,
+      },
+      attributes: ["ticker_list"],
+      order: [["created_at", "DESC"]],
+    });
+
+    if (scannerLatestData && scannerLatestData?.ticker_list?.length) {
+      if (arraysHaveSameElements(scannerLatestData.ticker_list, ticketList)) {
+        return;
+      }
+      const addedElements = ticketList.filter((item) => !scannerLatestData.ticker_list.includes(item));
+      if (addedElements.length) {
+        addedElements = addedElements.map((el) => {
+          const matchingData = normalizedArr.find((data) => data.symbol === el);
+          if (matchingData) {
+            return `${el} >>> ${matchingData.price}`;
+          }
+          return;
+        });
+        const message = `<b>${scannerInput.name}</b>\n\n<b>New Added:</b> <i>${addedElements.join(", ")}</i>\n\n<b>Time:</b> <i>${moment()
+          .utcOffset("+05:30")
+          .format("YYYY-MM-DD HH:mm A")}</i>\n`;
+        await sendMessage(message);
+      }
+    }
+    return await DailyScanDataModel.create(dailyScanPayload);
+  }
+  return;
 }
 
 async function fetchScannersData(scanners) {
@@ -92,8 +165,7 @@ async function fetchScannersData(scanners) {
 
       for (let scanner of allRecords) {
         const page = await browser.newPage();
-        const scrapedStockList = await scrapStockslist(scanner.link, page);
-        console.log("scrapedStockList", scrapedStockList);
+        const scrapedStockList = await scrapStockslist(scanner, page);
         await page.close();
       }
     }

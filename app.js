@@ -33,7 +33,7 @@ const job = CronJob.from({
 
 
 const fetchScannerData = CronJob.from({
-  cronTime: "* * * * *",
+  cronTime: "*/5 9-16 * * 1-5",
   onTick: function () {
     fetchScannersData(fetchHistoryScanners);
   },
