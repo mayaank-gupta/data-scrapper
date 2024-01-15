@@ -71,7 +71,6 @@ async function scrapStockslist(scannerInput, page) {
 
   if (typeof scrapedArr == "undefined") return;
   if (!Array.isArray(scrapedArr) && !scrapedArr.length) return;
-  const dateNow = moment().tz("Asia/Kolkata").format();
 
   const normalizedArr = [];
   const ticketList = [];
@@ -123,7 +122,6 @@ async function scrapStockslist(scannerInput, page) {
       attributes: ["ticker_list"],
       order: [["created_at", "DESC"]],
     });
-
     if (scannerLatestData && scannerLatestData?.ticker_list?.length) {
       if (arraysHaveSameElements(scannerLatestData.ticker_list, ticketList)) {
         return;
