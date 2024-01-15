@@ -128,7 +128,7 @@ async function scrapStockslist(scannerInput, page) {
       if (arraysHaveSameElements(scannerLatestData.ticker_list, ticketList)) {
         return;
       }
-      const addedElements = ticketList.filter((item) => !scannerLatestData.ticker_list.includes(item));
+      let addedElements = ticketList.filter((item) => !scannerLatestData.ticker_list.includes(item));
       if (addedElements.length) {
         addedElements = addedElements.map((el) => {
           const matchingData = normalizedArr.find((data) => data.symbol === el);
