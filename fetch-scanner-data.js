@@ -111,7 +111,7 @@ async function scrapStockslist(scannerInput, page) {
   }
   const dailyScanPayload = {
     scannerId: scannerInput.id,
-    tickerList: ticketList,
+    tickerList: ticketList.sort(),
   };
 
   if (ticketList.length) {
