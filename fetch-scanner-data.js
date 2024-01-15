@@ -103,7 +103,7 @@ async function scrapStockslist(scannerInput, page) {
         fin_code: finCode || null,
       };
 
-      symbolCreate = SymbolModel.create(payload);
+      symbolCreate = await SymbolModel.create(payload);
       ticketList.push(+symbolCreate.id);
     } else {
       ticketList.push(+singleSymbolData.id);
@@ -137,7 +137,7 @@ async function scrapStockslist(scannerInput, page) {
           }
           return;
         });
-        const message = `<b>${scannerInput.name}</b>\n\n<b>New Added:</b> <i>${addedElements.join(", ")}</i>\n\n<b>Time:</b> <i>${moment()
+        const message = `<b>${scannerInput.name}</b>\n\n<b>New Added:</b> <i>${addedElements.join("\n")}</i>\n\n<b>Time:</b> <i>${moment()
           .utcOffset("+05:30")
           .format("YYYY-MM-DD HH:mm A")}</i>\n`;
         await sendMessage(message);
