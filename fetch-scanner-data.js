@@ -130,14 +130,20 @@ async function scrapStockslist(scannerInput, page) {
       }
       let addedElements = ticketList.filter((item) => !scannerLatestData.ticker_list.includes(item));
       if (addedElements.length) {
-        addedElements = addedElements.map((el) => {
-          const matchingData = normalizedArr.find((data) => data.symbol === el);
+        const addedData = await SymbolModel.findAll({
+          raw: true,
+          where: {
+            id: addedElements,
+          },
+        });
+        addedElements = addedData.map((el) => {
+          const matchingData = normalizedArr.find((data) => data.symbol === el.symbol);
           if (matchingData) {
-            return `${el} >>> ${matchingData.price}`;
+            return `<b>${el.symbol}</b> >>> ${matchingData.price}`;
           }
           return;
         });
-        const message = `<b>${scannerInput.name}</b>\n\n<b>New Added:</b> <i>${addedElements.join("\n")}</i>\n\n<b>Time:</b> <i>${moment()
+        const message = `<b>${scannerInput.name}</b>\n\n<b>New Added:</b>\n<i>${addedElements.join("\n")}</i>\n\n<b>Time:</b> <i>${moment()
           .utcOffset("+05:30")
           .format("YYYY-MM-DD HH:mm A")}</i>\n`;
         await sendMessage(message);
@@ -153,7 +159,7 @@ async function fetchScannersData(scanners) {
     console.log("fetchScannersData Executed!");
 
     const allRecords = await ScannersModel.findAll({ raw: true });
-
+    
     if (Array.isArray(scanners) && scanners.length) {
       browser = await chromium.puppeteer.launch({
         args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],

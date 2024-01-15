@@ -21,6 +21,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         field: 'search_term_id',
       },
+      name: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+        field: 'name',
+      },
       createdDate: {
         allowNull: false,
         type: DataTypes.DATE,
