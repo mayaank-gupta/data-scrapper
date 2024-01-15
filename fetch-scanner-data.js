@@ -147,9 +147,11 @@ async function scrapStockslist(scannerInput, page) {
           .utcOffset("+05:30")
           .format("YYYY-MM-DD HH:mm A")}</i>\n`;
         await sendMessage(message);
+        return await DailyScanDataModel.create(dailyScanPayload);
       }
+    } else {
+      return await DailyScanDataModel.create(dailyScanPayload);
     }
-    return await DailyScanDataModel.create(dailyScanPayload);
   }
   return;
 }
@@ -159,7 +161,7 @@ async function fetchScannersData(scanners) {
     console.log("fetchScannersData Executed!");
 
     const allRecords = await ScannersModel.findAll({ raw: true });
-    
+
     if (Array.isArray(scanners) && scanners.length) {
       browser = await chromium.puppeteer.launch({
         args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
