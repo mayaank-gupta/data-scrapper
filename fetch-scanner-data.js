@@ -155,6 +155,7 @@ async function scrapStockslist(scannerInput, page) {
 }
 
 async function fetchScannersData(scanners) {
+  let browser;
   try {
     console.log("fetchScannersData Executed!");
 
@@ -178,7 +179,7 @@ async function fetchScannersData(scanners) {
   } catch (err) {
     console.log(err);
   } finally {
-    if (browser !== null) {
+    if (browser !== null && typeof browser === "object") {
       await browser.close();
     }
   }

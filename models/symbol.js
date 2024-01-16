@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
       },
       stockName: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.STRING,
         field: "stock_name",
       },
