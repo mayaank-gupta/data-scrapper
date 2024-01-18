@@ -166,8 +166,7 @@ async function scrapStockslist(scannerInput, page) {
     const todayCheck = new Date();
     todayCheck.setHours(0, 0, 0, 0);
     const findTodaysNewScannerData = await NewDailyScanDataModel.findOne({
-      raw: true,
-      attributes: ['ticker_list'],
+      raw: true,     
       where: {
         scannerId: newDailyScanPayload.scannerId,
         created_at: {
@@ -187,7 +186,7 @@ async function scrapStockslist(scannerInput, page) {
       const tickerList = [];
 
       newDailyScanPayload.tickerList.map((item) => {
-        const existingObject = findTodaysNewScannerData.ticker_list.find(
+        const existingObject = findTodaysNewScannerData.tickerList.find(
           (obj) => obj.name === item.name
         );
 
@@ -200,7 +199,7 @@ async function scrapStockslist(scannerInput, page) {
         await NewDailyScanDataModel.update(
           {
             tickerList: [
-              ...findTodaysNewScannerData.ticker_list,
+              ...findTodaysNewScannerData.tickerList,
               ...tickerList,
             ],
           },
