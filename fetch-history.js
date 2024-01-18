@@ -1,10 +1,7 @@
-const { Op } = require('sequelize');
 const chromium = require('chrome-aws-lambda');
 const moment = require('moment-timezone');
 const axios = require('axios');
 const sendMessage = require('./send_message');
-const models = require('./models');
-const NewDailyScanDataModel = models.new_daily_scan_data;
 
 let browser = null;
 const stockUrl = `https://stock-daily-price.vercel.app/get_stock_data`;
@@ -83,68 +80,6 @@ async function fetchData(scanners) {
                           )}</i>\n\n<b>Time:</b> <i>${moment()
                             .utcOffset('+05:30')
                             .format('YYYY-MM-DD HH:mm A')}</i>\n`;
-
-                          // create the new table to store the scanner id
-                          const payload = {
-                            scannerId: scanner.id,
-                            tickerList: tickerListJson,
-                          };                    
-
-                          // NewDailyScanDataModel Find
-                          const today = new Date();
-                          today.setHours(0, 0, 0, 0);
-                          const findTodaysScannerData =
-                            await NewDailyScanDataModel.findOne({
-                              raw: true,
-                              attributes: ['ticker_list'],
-                              where: {
-                                scannerId: payload.scannerId,
-                                created_at: {
-                                  [Op.and]: {
-                                    [Op.gte]: today, // Greater than or equal to today
-                                    [Op.lt]: new Date(
-                                      today.getTime() + 86400000
-                                    ), // Less than tomorrow (24 hours later)
-                                  },
-                                },
-                              },
-                            });
-
-                          if (findTodaysScannerData === null) {
-                            // create new
-                            await NewDailyScanDataModel.create(payload);
-                          } else {
-                            // update existing
-                            const tickerList = [];
-
-                            payload.tickerList.map((item) => {
-                              const existingObject =
-                                findTodaysScannerData.ticker_list.find(
-                                  (obj) => obj.name === item.name
-                                );
-
-                              if (!existingObject) {
-                                tickerList.push(objectToAdd);
-                              }
-                            });
-
-                            if (tickerList.length) {
-                              await NewDailyScanDataModel.update(
-                                {
-                                  tickerList: [
-                                    ...findTodaysScannerData.ticker_list,
-                                    ...tickerList,
-                                  ],
-                                },
-                                {
-                                  where: {
-                                    scannerId: payload.scannerId,
-                                  },
-                                }
-                              );
-                            }
-                          }
-
                           await sendMessage(message);
                         }
                       });

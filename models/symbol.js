@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         field: "stock_name",
       },
       finCode: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.STRING,
         field: "fin_code",
       },
