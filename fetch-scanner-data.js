@@ -139,73 +139,109 @@ async function scrapStockslist(scannerInput, page) {
     tickerList: ticketList.sort(),
   };
 
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const startOfYesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 0, 0, 0);
+  const endOfYesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59);
+
   if (ticketList.length) {
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-    // Set the start of tomorrow
-    tomorrow.setHours(0, 0, 0, 0);
-    // Set the end of tomorrow
-    const endOfTomorrow = new Date(tomorrow);
-    endOfTomorrow.setHours(23, 59, 59, 999);
-    //
     const scannerLatestData = await DailyScanDataModel.findOne({
       raw: true,
       where: {
         scannerId: scannerInput.id,
         created_at: {
-          [Op.gte]: tomorrow,
-          [Op.lt]: endOfTomorrow,
+          [Op.gte]: startOfYesterday, // Greater than or equal to the start of yesterday
+          [Op.lt]: endOfYesterday 
         },
       },
       attributes: ['ticker_list'],
-      order: [['created_at', 'DESC']],
     });
 
     // New Table
-    const todayCheck = new Date();
-    todayCheck.setHours(0, 0, 0, 0);
-    const findTodaysNewScannerData = await NewDailyScanDataModel.findOne({
+    let findYesterdaysNewScannerData = await NewDailyScanDataModel.findOne({
       raw: true,     
       where: {
         scannerId: newDailyScanPayload.scannerId,
         created_at: {
-          [Op.and]: {
-            [Op.gte]: todayCheck, // Greater than or equal to today
-            [Op.lt]: new Date(todayCheck.getTime() + 86400000), // Less than tomorrow (24 hours later)
-          },
+          [Op.gte]: startOfYesterday,
+          [Op.lt]: endOfYesterday 
         },
       },
     });
 
-    if (findTodaysNewScannerData === null) {
+    if (findYesterdaysNewScannerData === null) {
+      // If yesterdays date data not found then check for today and update it
+      const todayCheck = new Date();
+      todayCheck.setHours(0, 0, 0, 0);
+      const findTodaysNewScannerData = await NewDailyScanDataModel.findOne({
+        raw: true,     
+        where: {
+          scannerId: newDailyScanPayload.scannerId,
+          created_at: {
+            [Op.and]: {
+              [Op.gte]: todayCheck, // Greater than or equal to today
+              [Op.lt]: new Date(todayCheck.getTime() + 86400000), // Less than tomorrow (24 hours later)
+            },
+          },
+        },
+      });
+
+      if(findTodaysNewScannerData === null) {
       // create new daily scan data
       await NewDailyScanDataModel.create(newDailyScanPayload);
+      } else {
+        const tickerList = [];
+
+        newDailyScanPayload.tickerList.map((item) => {
+          const existingObject = findTodaysNewScannerData.tickerList.find(
+            (obj) => obj.name === item.name
+          );
+  
+          if (!existingObject) {
+            tickerList.push(item);
+          }
+        });
+  
+        if (tickerList.length) {
+          await NewDailyScanDataModel.update(
+            {
+              tickerList: [
+                ...findTodaysNewScannerData.tickerList,
+                ...tickerList,
+              ],
+            },
+            {
+              where: {
+                id: findTodaysNewScannerData.id,              
+              },
+            }
+          );
+        }
+      }
+
     } else {
       // update existing
       const tickerList = [];
 
       newDailyScanPayload.tickerList.map((item) => {
-        const existingObject = findTodaysNewScannerData.tickerList.find(
+        const existingObject = findYesterdaysNewScannerData.tickerList.find(
           (obj) => obj.name === item.name
         );
 
         if (!existingObject) {
-          tickerList.push(objectToAdd);
+          tickerList.push(item);
         }
       });
 
       if (tickerList.length) {
         await NewDailyScanDataModel.update(
           {
-            tickerList: [
-              ...findTodaysNewScannerData.tickerList,
-              ...tickerList,
-            ],
+            tickerList: tickerList,
           },
           {
             where: {
-              scannerId: newDailyScanPayload.scannerId,
+              id: findYesterdaysNewScannerData.id,
             },
           }
         );
