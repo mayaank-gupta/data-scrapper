@@ -139,7 +139,6 @@ async function scrapStockslist(scannerInput, page) {
     tickerList: ticketList.sort(),
   };
 
-  const today = new Date();
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   const startOfYesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 0, 0, 0);
