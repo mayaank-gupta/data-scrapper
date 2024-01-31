@@ -62,12 +62,15 @@ async function scrapStockslist(scannerInput, page) {
     if (typeof scrapedArr == 'undefined') return;
     if (!Array.isArray(scrapedArr) && !scrapedArr.length) return;
   
+    const indianTime = moment.tz(new Date(), 'Asia/Kolkata');
+    const formattedIndianTime  = indianTime.format('HH:mm')
     scrapedArr = scrapedArr.map((stock) => {
       return {
         name: stock['Stock Name'],
         symbol: stock['Symbol'],
         price: stock['Price'],
         change: stock['% Chg'],
+        time: formattedIndianTime,
       };
     });
   
