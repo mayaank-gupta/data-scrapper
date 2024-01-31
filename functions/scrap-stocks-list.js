@@ -1,4 +1,5 @@
 const safePromise = require("./safe-promise");
+const moment = require('moment-timezone');
 
 async function scrapStockslist(scannerInput, page) {
     const [visitError] = await safePromise(
