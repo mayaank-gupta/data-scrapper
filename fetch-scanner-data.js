@@ -2,11 +2,11 @@ const chromium = require('chrome-aws-lambda');
 const models = require('./models');
 const ScannersModel = models.scanners;
 
-const scrapStockslist = require("./functions/scrap-stocks-list");
+const scrapStockslist = require('./functions/scrap-stocks-list');
 const insertNewSymbol = require('./functions/insert-new-symbol');
-const upsertNewDailyScan = require("./functions/upsert-new-daily-scan");
-const upsertDailyScan = require("./functions/upsert-daily-scan");
-const formatAndSendMessage= require("./functions/format-and-send-message");
+const upsertNewDailyScan = require('./functions/upsert-new-daily-scan');
+const upsertDailyScan = require('./functions/upsert-daily-scan');
+const formatAndSendMessage = require('./functions/format-and-send-message');
 
 async function fetchScannersData(scanners) {
   let browser;
@@ -27,17 +27,27 @@ async function fetchScannersData(scanners) {
         // scrap the stock list
         const scrapedStockList = await scrapStockslist(scanner, page);
         console.log(scrapedStockList);
+
+        if (!scrapedStockList || !scrapedStockList.length) {
+          throw new Error('scrapedStockList is null');
+        }
         // create the new symbol if not exist in the symbols table also fetch the fincode when creating (symbol = stock)
         const tickerList = await insertNewSymbol(scrapedStockList);
 
         // upsert new Table
-        const newElements = await upsertNewDailyScan(scanner.id, scrapedStockList);
+        const newElements = await upsertNewDailyScan(
+          scanner.id,
+          scrapedStockList
+        );
 
         // upsert old Table
         // it contains only ids
-        const newElementsFromOldTables = await upsertDailyScan(scanner.id, tickerList);
+        const newElementsFromOldTables = await upsertDailyScan(
+          scanner.id,
+          tickerList
+        );
 
-        console.log("newElements", newElements);
+        console.log('newElements', newElements);
 
         // if we want to check wiht newElementsFromOldTables then fetch the symbols table
         // currently we are cheking new table
