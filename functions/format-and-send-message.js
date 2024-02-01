@@ -20,7 +20,7 @@ async function formatAndSendMessage(scannerName, newElements) {
   }
 
   newElements = newElements.map((stock) => {
-    return `<b>${stock.name}</b> >>> ${stock.price} | StocksCount: ${calculateStocks(stock.price, 3000)}`;
+    return `<b>${stock.name}</b> >>> ${stock.price} | StocksCount: ${calculateStocks(+stock.price, 3000)}`;
   });
 
   const message = `<b>${scannerName}</b>\n\n<b>New Added:</b>\n<i>${newElements.join("\n")}</i>\n\n<b>Time:</b> <i>${moment()
