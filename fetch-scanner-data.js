@@ -31,6 +31,7 @@ async function fetchScannersData(scanners) {
         console.log(scrapedStockList);
 
         if (!scrapedStockList || !scrapedStockList.length) {
+          page.close();
           continue;
         }
         // create the new symbol if not exist in the symbols table also fetch the fincode when creating (symbol = stock)
