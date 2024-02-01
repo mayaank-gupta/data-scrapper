@@ -28,8 +28,7 @@ async function fetchScannersData(scanners) {
         console.log("scanner", scanner);
         // scrap the stock list
         const scrapedStockList = await scrapStockslist(scanner, page);
-        console.log(scrapedStockList);
-
+        
         if (!scrapedStockList || !scrapedStockList.length) {
           page.close();
           continue;
