@@ -8,7 +8,7 @@ async function upsertNewDailyScan(scannerId, tickerList) {
     return {
       name: item.symbol,
       price: item.price,
-      time: item.time,
+      time: item.time ? item.time : "" ,
     };
   });
 
