@@ -24,8 +24,6 @@ async function fetchScannersData(scanners) {
 
       for (let scanner of allRecords) {
         const page = await browser.newPage();
-
-        console.log("scanner", scanner);
         // scrap the stock list
         const scrapedStockList = await scrapStockslist(scanner, page);
         
@@ -48,8 +46,6 @@ async function fetchScannersData(scanners) {
           scanner.id,
           tickerList
         );
-
-        console.log('newElements', newElements);
 
         // if we want to check wiht newElementsFromOldTables then fetch the symbols table
         // currently we are cheking new table
