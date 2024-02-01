@@ -24,12 +24,14 @@ async function fetchScannersData(scanners) {
 
       for (let scanner of allRecords) {
         const page = await browser.newPage();
+
+        console.log("scanner", scanner);
         // scrap the stock list
         const scrapedStockList = await scrapStockslist(scanner, page);
         console.log(scrapedStockList);
 
         if (!scrapedStockList || !scrapedStockList.length) {
-          throw new Error('scrapedStockList is null');
+          continue;
         }
         // create the new symbol if not exist in the symbols table also fetch the fincode when creating (symbol = stock)
         const tickerList = await insertNewSymbol(scrapedStockList);
