@@ -10,6 +10,7 @@ const fetchData = require("./runner");
 const fetchHistory = require("./fetch-history");
 const fetchCsrfToken = require("./fetch-csrf");
 const fetchScannersData = require("./fetch-scanner-data");
+const generateDailyReport = require("./functions/daily-report");
 
 var indexRouter = require("./routes/index");
 
@@ -31,7 +32,6 @@ const job = CronJob.from({
   timeZone: "Asia/Kolkata",
 });
 
-
 const fetchScannerData = CronJob.from({
   cronTime: "*/5 9-16 * * 1-5",
   onTick: function () {
@@ -40,7 +40,6 @@ const fetchScannerData = CronJob.from({
   start: false,
   timeZone: "Asia/Kolkata",
 });
-
 
 const fetchCsrf = CronJob.from({
   cronTime: "*/1 9-16 * * *",
@@ -60,11 +59,21 @@ const fetchHistoricalData = CronJob.from({
   timeZone: "Asia/Kolkata",
 });
 
+const generateReport = CronJob.from({
+  cronTime: "30 17 * * 1-5",
+  onTick: function () {
+    generateDailyReport();
+  },
+  start: false,
+  timeZone: "Asia/Kolkata",
+});
+
 // fetchCsrf.start();
 
 //fetchHistoricalData.start();
 //job.start();
 fetchScannerData.start();
+generateReport.start();
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
