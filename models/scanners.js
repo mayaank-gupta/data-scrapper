@@ -38,6 +38,12 @@ module.exports = (sequelize, DataTypes) => {
         field: 'updated_at',
         defaultValue: new Date(),
       },
+      isActive: {
+        allowNull: true,
+        type: DataTypes.BOOLEAN,
+        field: 'is_active',
+        defaultValue: true,
+      },
     },
     {
       freezeTableName: true,

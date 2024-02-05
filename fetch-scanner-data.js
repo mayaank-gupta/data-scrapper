@@ -1,21 +1,21 @@
-const chromium = require('chrome-aws-lambda');
-const models = require('./models');
+const chromium = require("chrome-aws-lambda");
+const models = require("./models");
 const ScannersModel = models.scanners;
 
-const scrapStockslist = require('./functions/scrap-stocks-list');
-const insertNewSymbol = require('./functions/insert-new-symbol');
-const upsertNewDailyScan = require('./functions/upsert-new-daily-scan');
-const upsertDailyScan = require('./functions/upsert-daily-scan');
-const formatAndSendMessage = require('./functions/format-and-send-message');
+const scrapStockslist = require("./functions/scrap-stocks-list");
+const insertNewSymbol = require("./functions/insert-new-symbol");
+const upsertNewDailyScan = require("./functions/upsert-new-daily-scan");
+const upsertDailyScan = require("./functions/upsert-daily-scan");
+const formatAndSendMessage = require("./functions/format-and-send-message");
 
 async function fetchScannersData(scanners) {
   let browser;
   try {
-    console.log('fetchScannersData Executed!');
-    const allRecords = await ScannersModel.findAll({ raw: true });
+    console.log("fetchScannersData Executed!");
+    const allRecords = await ScannersModel.findAll({ raw: true, where: { isActive: true } });
     if (Array.isArray(scanners) && scanners.length) {
       browser = await chromium.puppeteer.launch({
-        args: [...chromium.args, '--hide-scrollbars', '--disable-web-security'],
+        args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
         defaultViewport: chromium.defaultViewport,
         executablePath: await chromium.executablePath,
         headless: true,
@@ -26,7 +26,7 @@ async function fetchScannersData(scanners) {
         const page = await browser.newPage();
         // scrap the stock list
         const scrapedStockList = await scrapStockslist(scanner, page);
-        
+
         if (!scrapedStockList || !scrapedStockList.length) {
           page.close();
           continue;
@@ -35,17 +35,11 @@ async function fetchScannersData(scanners) {
         const tickerList = await insertNewSymbol(scrapedStockList);
 
         // upsert new Table
-        const newElements = await upsertNewDailyScan(
-          scanner.id,
-          scrapedStockList
-        );
+        const newElements = await upsertNewDailyScan(scanner.id, scrapedStockList);
 
         // upsert old Table
         // it contains only ids
-        const newElementsFromOldTables = await upsertDailyScan(
-          scanner.id,
-          tickerList
-        );
+        const newElementsFromOldTables = await upsertDailyScan(scanner.id, tickerList);
 
         // if we want to check wiht newElementsFromOldTables then fetch the symbols table
         // currently we are cheking new table
@@ -57,7 +51,7 @@ async function fetchScannersData(scanners) {
   } catch (err) {
     console.log(err);
   } finally {
-    if (browser !== null && typeof browser === 'object') {
+    if (browser !== null && typeof browser === "object") {
       await browser.close();
     }
   }
