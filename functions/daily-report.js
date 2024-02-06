@@ -65,11 +65,13 @@ async function generateDailyReport() {
           return null;
         })
         .filter(Boolean);
-      const message = `<b>${data["scanner.name"]}</b>\n\n<b>Daily Report:</b>\n====================\n\n
-      Total Investment: ${totalInvestment.toFixed(2)}\nTotal Value: ${totalValue.toFixed(2)}\nPercentage Change: <b>${(
-        ((totalValue - totalInvestment) / totalInvestment) *
-        100
-      ).toFixed(2)}</b>\n\n<b>Time:</b> <i>${moment().utcOffset("+05:30").format("YYYY-MM-DD HH:mm A")}</i>\n`;
+      const message = `<b>${
+        data["scanner.name"]
+      }</b>\n\n<b>Daily Report:</b>\n====================\nTotal Investment: ${totalInvestment.toFixed(
+        2
+      )}\nTotal Value: ${totalValue.toFixed(2)}\nPercentage Change: <b>${(((totalValue - totalInvestment) / totalInvestment) * 100).toFixed(
+        2
+      )}</b>\n\n<b>Time:</b> <i>${moment().utcOffset("+05:30").format("YYYY-MM-DD HH:mm A")}</i>\n`;
       await sendMessage(message);
       (totalInvestment = 0), (totalValue = 0);
     }
