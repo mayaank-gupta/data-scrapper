@@ -41,6 +41,15 @@ const fetchScannerData = CronJob.from({
   timeZone: "Asia/Kolkata",
 });
 
+const fetchScannerDataDayEnd = CronJob.from({
+  cronTime: "01 23 * * 1-5",
+  onTick: function () {
+    fetchScannersData(fetchHistoryScanners);
+  },
+  start: false,
+  timeZone: "Asia/Kolkata",
+});
+
 const fetchCsrf = CronJob.from({
   cronTime: "*/1 9-16 * * *",
   onTick: function () {
@@ -74,6 +83,7 @@ const generateReport = CronJob.from({
 //job.start();
 fetchScannerData.start();
 generateReport.start();
+fetchScannerDataDayEnd.start();
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
