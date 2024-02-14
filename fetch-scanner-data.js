@@ -18,11 +18,12 @@ async function fetchScannersData(scanners) {
         args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
         defaultViewport: chromium.defaultViewport,
         executablePath: await chromium.executablePath,
-        headless: true,
+        headless: "new",
         ignoreHTTPSErrors: true,
       });
 
       for (let scanner of allRecords) {
+        console.log("scanner", scanner);
         const page = await browser.newPage();
         // scrap the stock list
         const scrapedStockList = await scrapStockslist(scanner, page);
