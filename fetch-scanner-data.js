@@ -23,7 +23,7 @@ async function fetchScannersData(scanners) {
       });
 
       for (let scanner of allRecords) {
-        console.log("scanner_name", scanner?.name);
+        console.log("Running scanner_name:", scanner?.name);
         const page = await browser.newPage();
         // scrap the stock list
         const scrapedStockList = await scrapStockslist(scanner, page);
