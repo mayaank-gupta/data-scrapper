@@ -18,4 +18,5 @@ module.exports = {
       rejectUnauthorized: false,
     },
   },
+  logging: false,
 };
