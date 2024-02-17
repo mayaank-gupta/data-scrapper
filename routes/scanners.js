@@ -108,8 +108,7 @@ router.post('/remove', async function (req, res, next) {
 router.get('/updateAllScanClause', async function (req, res, next) {
   const [error, scanners] = await safePromise(
     Scanners.findAll({
-      raw: true,
-      where: { isActive: true },
+      raw: true,      
     })
   );
 
