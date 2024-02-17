@@ -38,6 +38,4 @@ async function fetchScannersData() {
   }
 }
 
-// module.exports = fetchScannersData;
-
-fetchScannersData();
+module.exports = fetchScannersData;

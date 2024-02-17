@@ -3,7 +3,7 @@ var router = express.Router();
 
 const fetchScanClause = require('../functions/fetch-scan-clause');
 const safePromise = require('../functions/safe-promise');
-
+const sendMessage = require("../send_message");
 const models = require('../models');
 const Scanners = models.scanners;
 
@@ -47,10 +47,10 @@ router.post('/upsert', async function (req, res, next) {
     const payload = req.body;
 
     if (payload.id) {
-      let { name, link, scanClause } = payload;
+      let { name, link } = payload;
 
       await Scanners.update(
-        { name, link, scanClause },
+        { name, link },
         {
           where: {
             id: payload.id,
@@ -65,8 +65,8 @@ router.post('/upsert', async function (req, res, next) {
 
     const [error1] = await safePromise(fetchScanClause([scanner]));
 
-    if (error1) {
-      // send it to telegram
+    if (error1) {      
+      await sendMessage(`<b>Error updating scan clauese for ${scanner.name}:</b> >>> ${error1}`)
     }
   } catch (error) {
     console.log('error', error);
@@ -129,7 +129,7 @@ router.get('/updateAllScanClause', async function (req, res, next) {
   const [error1] = await safePromise(fetchScanClause(scanners));
 
   if (error1) {
-    // send it to telegram
+    await sendMessage(`<b>Error updating all scan clauses:</b> >>> ${error1}`)
   }
 });
 
