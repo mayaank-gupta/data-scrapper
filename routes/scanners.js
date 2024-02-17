@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
+const fetchScanClause = require('../functions/fetch-scan-clause');
+const safePromise = require('../functions/safe-promise');
+
 const models = require('../models');
 const Scanners = models.scanners;
 
@@ -58,7 +61,13 @@ router.post('/upsert', async function (req, res, next) {
     }
 
     const scanner = await Scanners.create(payload);
-    return res.json({ success: true, res: scanner.id });
+    res.json({ success: true, res: scanner.id });
+
+    const [error1] = await safePromise(fetchScanClause([scanner]));
+
+    if (error1) {
+      // send it to telegram
+    }
   } catch (error) {
     console.log('error', error);
     return res.json({
@@ -93,6 +102,35 @@ router.post('/remove', async function (req, res, next) {
       message: error.message || 'Check remove',
       res: [],
     });
+  }
+});
+
+router.get('/updateAllScanClause', async function (req, res, next) {
+  const [error, scanners] = await safePromise(
+    Scanners.findAll({
+      raw: true,
+      where: { isActive: true },
+    })
+  );
+
+  if (error) {
+    return res.json({
+      success: false,
+      message: error.message || 'Check updateAllScanClause',
+      res: [],
+    });
+  }
+
+  res.json({
+    success: true,
+    message: 'updating',
+    res: {},
+  });
+
+  const [error1] = await safePromise(fetchScanClause(scanners));
+
+  if (error1) {
+    // send it to telegram
   }
 });
 
