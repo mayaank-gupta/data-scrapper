@@ -1,5 +1,6 @@
 require("dotenv").config();
 var createError = require("http-errors");
+var cors = require('cors')
 var express = require("express");
 const { CronJob } = require("cron");
 var cookieParser = require("cookie-parser");
@@ -13,6 +14,7 @@ const fetchScannersData = require("./fetch-scanner-data");
 const generateDailyReport = require("./functions/daily-report");
 
 var indexRouter = require("./routes/index");
+var scannersRouter = require("./routes/scanners");
 
 var app = express();
 
@@ -20,8 +22,10 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors())
 
 app.use("/", indexRouter);
+app.use("/scanners", scannersRouter);
 
 const job = CronJob.from({
   cronTime: "*/10 9-16 * * 1-5",

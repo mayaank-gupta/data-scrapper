@@ -1,4 +1,3 @@
-
 module.exports = (sequelize, DataTypes) => {
   const scanners = sequelize.define(
     'scanners',
@@ -17,9 +16,10 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
       },
       searchTermId: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.INTEGER,
         field: 'search_term_id',
+        default: 4
       },
       name: {
         allowNull: false,
@@ -43,6 +43,12 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         field: 'is_active',
         defaultValue: true,
+      },
+      scanClause: {
+        allowNull: true,
+        type: DataTypes.TEXT,
+        field: 'scan_clause',
+        defaultValue: '',
       },
     },
     {
