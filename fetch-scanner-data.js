@@ -7,6 +7,7 @@ const insertNewSymbol = require("./functions/insert-new-symbol");
 const upsertNewDailyScan = require("./functions/upsert-new-daily-scan");
 const upsertDailyScan = require("./functions/upsert-daily-scan");
 const formatAndSendMessage = require("./functions/format-and-send-message");
+const sendMessage = require('./send_message');
 
 async function fetchScannersData() {
   try {
@@ -33,9 +34,14 @@ async function fetchScannersData() {
       // currently we are cheking new table
       await formatAndSendMessage(scanner.name, newElements);
     }
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log("error", error.message);
+    sendMessage(`<b>ERROR</b> >>> ${error.message}`);
   }
 }
 
-module.exports = fetchScannersData;
+(async () => {
+  await fetchScannersData();
+})()
+
+// module.exports = fetchScannersData;

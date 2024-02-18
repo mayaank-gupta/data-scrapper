@@ -8,7 +8,7 @@ async function upsertNewDailyScan(scannerId, tickerList) {
     return {
       name: item.symbol,
       price: item.price,
-      time: item.time ? item.time : "" ,
+      time: item.time ? item.time : '',
     };
   });
 
@@ -32,30 +32,44 @@ async function upsertNewDailyScan(scannerId, tickerList) {
     },
   });
 
-  // select yesterdays data
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  yesterday.setHours(0, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds to 0
+  // select seventhDays data
+  const seventhDay = new Date();
+  seventhDay.setDate(seventhDay.getDate() - 7);
+  seventhDay.setHours(0, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds to 0
 
-  const yesterdaysExistingData = await NewDailyScanDataModel.findOne({
+  const seventhDaysExistingData = await NewDailyScanDataModel.findAll({
     raw: true,
     where: {
       scannerId: scannerId,
       createdDate: {
-        [Op.gte]: yesterday, // Greater than or equal to yesterday
+        [Op.gte]: seventhDay, // Greater than or equal to seventhDay
         [Op.lt]: today, // Less than today
       },
     },
   });
 
-  if (yesterdaysExistingData === null && todaysExistingData === null) {
+  if (
+    (seventhDaysExistingData === null || seventhDaysExistingData.length < 1) &&
+    todaysExistingData === null
+  ) {
     await NewDailyScanDataModel.create(newDailyScanPayload);
     return tickerList;
   }
 
-  let yesterdaysExistingTickerList = [];
-  if (yesterdaysExistingData !== null) {
-    yesterdaysExistingTickerList = yesterdaysExistingData.tickerList;
+  let seventhDaysExistingTickerList = [];
+  if (seventhDaysExistingData !== null) {
+    // Extract tickerList arrays and merge them into a single array
+    let allTickerLists = seventhDaysExistingData
+      .map((item) => item.tickerList)
+      .flat();
+
+    // Remove duplicates from the array
+    allTickerLists = allTickerLists.filter(
+      (ticker, index, self) =>
+        index === self.findIndex((t) => t.name === ticker.name)
+    );
+
+    seventhDaysExistingTickerList = allTickerLists;
   }
 
   let todaysExistingTickerList = [];
@@ -64,10 +78,10 @@ async function upsertNewDailyScan(scannerId, tickerList) {
   }
 
   // compare with both days and update
-  if (yesterdaysExistingTickerList.length && todaysExistingTickerList.length) {
+  if (seventhDaysExistingTickerList.length && todaysExistingTickerList.length) {
     const newStocksList = tickerList.filter(
       (item) =>
-        ![...yesterdaysExistingTickerList, ...todaysExistingTickerList].some(
+        ![...seventhDaysExistingTickerList, ...todaysExistingTickerList].some(
           (existingItem) => existingItem.name === item.name
         )
     );
@@ -88,12 +102,12 @@ async function upsertNewDailyScan(scannerId, tickerList) {
       return newStocksList;
     }
   } else if (
-    yesterdaysExistingTickerList.length &&
+    seventhDaysExistingTickerList.length &&
     !todaysExistingTickerList.length
   ) {
     const newStocksList = tickerList.filter(
       (item) =>
-        !yesterdaysExistingTickerList.some(
+        !seventhDaysExistingTickerList.some(
           (existingItem) => existingItem.name === item.name
         )
     );
@@ -108,7 +122,7 @@ async function upsertNewDailyScan(scannerId, tickerList) {
       return newStocksList;
     }
   } else if (
-    !yesterdaysExistingTickerList.length &&
+    !seventhDaysExistingTickerList.length &&
     todaysExistingTickerList.length
   ) {
     // compare with today and update

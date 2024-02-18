@@ -1,6 +1,6 @@
 const axios = require('axios');
 const safePromise = require('./safe-promise');
-const moment = require("moment-timezone");
+const moment = require('moment-timezone');
 
 async function fetchStockslist(scanner, token) {
   let config = {
@@ -14,9 +14,12 @@ async function fetchStockslist(scanner, token) {
     data: scanner.scanClause,
   };
   const [error, result] = await safePromise(axios.request(config));
-  let scrapedArr = result.data.data;
 
-  console.log('error', error);
+  if (error && error.response && error.response.data && error.response.data.message) {
+    throw new Error(error.response.data.message);
+  }
+
+  let scrapedArr = result.data.data;
 
   const indianTime = moment.tz(new Date(), 'Asia/Kolkata');
   const formattedIndianTime = indianTime.format('HH:mm');
