@@ -24,8 +24,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors())
 
-app.use("/", indexRouter);
-app.use("/scanners", scannersRouter);
+app.use("/data", indexRouter);
+app.use("/data/scanners", scannersRouter);
 
 const job = CronJob.from({
   cronTime: "*/10 9-16 * * 1-5",
