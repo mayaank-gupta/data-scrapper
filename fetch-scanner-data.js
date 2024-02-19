@@ -33,7 +33,7 @@ async function fetchScannersData() {
         sendMessage(`<b>UPDATING TOKEN</b>`);
         // update the token by using same scanner
         const tokens = await updateToken(scanner);
-        scrapedStockList = fetchStockslist(scanner, tokens[0]);
+        scrapedStockList = await fetchStockslist(scanner, tokens[0]);
       }
 
       // create the new symbol if not exist in the symbols table also fetch the fincode when creating (symbol = stock)
