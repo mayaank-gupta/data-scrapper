@@ -39,22 +39,24 @@ async function fetchScannersData() {
       // create the new symbol if not exist in the symbols table also fetch the fincode when creating (symbol = stock)
       const tickerList = await insertNewSymbol(scrapedStockList);
 
-      // upsert new Table
-      const newElements = await upsertNewDailyScan(
-        scanner.id,
-        scrapedStockList
-      );
+      if (tickerList && Array.isArray(tickerList) && tickerList.length) {
+        // upsert new Table
+        const newElements = await upsertNewDailyScan(
+          scanner.id,
+          scrapedStockList
+        );
 
-      // upsert old Table
-      // it contains only ids
-      const newElementsFromOldTables = await upsertDailyScan(
-        scanner.id,
-        tickerList
-      );
+        // upsert old Table
+        // it contains only ids
+        const newElementsFromOldTables = await upsertDailyScan(
+          scanner.id,
+          tickerList
+        );
 
-      // if we want to check wiht newElementsFromOldTables then fetch the symbols table
-      // currently we are cheking new table
-      await formatAndSendMessage(scanner.name, newElements);
+        // if we want to check wiht newElementsFromOldTables then fetch the symbols table
+        // currently we are cheking new table
+        await formatAndSendMessage(scanner.name, newElements);
+      }
     }
   } catch (error) {
     console.log('error', error.message);

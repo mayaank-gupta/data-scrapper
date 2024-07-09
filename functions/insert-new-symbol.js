@@ -5,6 +5,11 @@ const SymbolModel = models.symbol;
 
 async function insertNewSymbol(currentSracpedArray) {
   const ticketList = [];
+
+  if (!Array.isArray(currentSracpedArray)) {
+    return ticketList;
+  }
+
   for (let symbolData of currentSracpedArray) {
     const singleSymbolData = await SymbolModel.findOne({
       raw: true,
